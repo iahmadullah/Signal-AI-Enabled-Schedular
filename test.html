@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <script src="agent-config-page.js"></script>
+    <script>
+        console.log("AGENT_PAGE_CONFIGS type:", typeof AGENT_PAGE_CONFIGS);
+        if (typeof AGENT_PAGE_CONFIGS !== 'undefined') {
+            console.log("orchestrator workflow nodes:", AGENT_PAGE_CONFIGS.orchestrator?.workflow?.length);
+        }
+    </script>
+</body>
+
+</html>

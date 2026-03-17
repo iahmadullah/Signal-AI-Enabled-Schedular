@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div id="wrap">
+        <svg id="svg"></svg>
+        <div id="canvas"></div>
+    </div>
+    <script src="agent-config-page.js"></script>
+    <script>
+        const a = AGENT_PAGE_CONFIGS['orchestrator'];
+        console.log("a.workflow:", !!a.workflow);
+        console.log("a.connections:", !!a.connections);
+
+        _canvas.nodes = a.workflow.map(n => ({ ...n }));
+        _canvas.connections = (a.connections || []).map(c => [...c]);
+
+        const canvasEl = document.getElementById('canvas');
+        const svgEl = document.getElementById('svg');
+
+        ensureArrowDefs(svgEl);
+        renderCanvas(canvasEl, svgEl);
+
+        console.log("Canvas HTML length after render:", canvasEl.innerHTML.length);
+        console.log("Node count inside canvas:", canvasEl.querySelectorAll('.cnv-node').length);
+    </script>
+</body>
+
+</html>

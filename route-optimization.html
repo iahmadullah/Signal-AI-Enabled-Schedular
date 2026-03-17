@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimization Agent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="route-optimization.css">
+</head>
+
+<body class="light-mode">
+    <div class="app-layout" id="app-layout">
+
+        <!-- ===== SIDEBAR NAVIGATION ===== -->
+        <nav class="sidebar" id="sidebar" aria-label="Main Navigation">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 22l6-10h10l-6 10H4z" fill="#FF9332" />
+                    <path d="M14 10l6-10h10l-6 10H14z" fill="#FF9332" />
+                </svg>
+            </div>
+            <div class="sidebar-nav">
+                <button class="sidebar-nav-item" title="Dashboard">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="6" height="6" rx="1" />
+                        <rect x="12" y="2" width="6" height="6" rx="1" />
+                        <rect x="2" y="12" width="6" height="6" rx="1" />
+                        <rect x="12" y="12" width="6" height="6" rx="1" />
+                    </svg>
+                </button>
+                <button class="sidebar-nav-item" title="Signal Map">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="10" cy="10" r="8" />
+                        <path d="M2 10h16" />
+                        <path d="M10 2c2.5 2 4 5 4 8s-1.5 6-4 8c-2.5-2-4-5-4-8s1.5-6 4-8z" />
+                    </svg>
+                </button>
+                <button class="sidebar-nav-item active" title="Schedule">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="4" width="14" height="14" rx="2" />
+                        <path d="M3 8h14" />
+                        <path d="M7 2v4" />
+                        <path d="M13 2v4" />
+                    </svg>
+                </button>
+                <button class="sidebar-nav-item" title="Agent Studio" onclick="window.location.href='agent-hub.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="transform: scale(0.85); transform-origin: center;">
+                        <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z"
+                            stroke-linejoin="round" />
+                        <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <button class="sidebar-nav-item" title="Users" style="position: relative;">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="10" cy="7" r="3" />
+                        <path d="M4 18c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+                    </svg>
+                    <span class="nav-dot"></span>
+                </button>
+                <button class="sidebar-nav-item" title="Settings">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="10" cy="10" r="3" />
+                        <path
+                            d="M10 1.5v2m0 13v2m-6-8.5h-2m16 0h-2m-1.5-5L13 6.5m-8 7L6.5 15m9.5-2l-1.5-1.5m-11 0L5 13" />
+                    </svg>
+                </button>
+            </div>
+            <button class="sidebar-toggle" id="sidebar-toggle" title="Collapse sidebar">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M8 2L4 6l4 4" />
+                </svg>
+            </button>
+        </nav>
+
+        <div class="ro-main-wrapper" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+            <!-- Header -->
+            <header class="header" id="page-header"
+                style="border-bottom: 1px solid #E5E5EA; background: white; z-index: 10;">
+                <div class="header-left">
+                    <div class="breadcrumb">
+                        <div class="breadcrumb-icon">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="4" width="14" height="14" rx="2" />
+                                <path d="M3 8h14" />
+                                <path d="M7 2v4" />
+                                <path d="M13 2v4" />
+                            </svg>
+                        </div>
+                        <span class="breadcrumb-text">Route Schedule Optimization</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-location">
+                        <span class="badge badge--brand">US Central Time</span>
+                        <span class="badge badge--brand">ID: 1234</span>
+                        <button class="location-dropdown" id="location-dropdown">
+                            <span>#709 Columbus, Georgia</span>
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round">
+                                <path d="M6 8l4 4 4-4" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="header-actions">
+                        <div class="header-notifications">
+                            <button class="notification-icon" title="Notifications"><svg viewBox="0 0 20 20" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M10 2a5 5 0 00-5 5v3l-1.5 2h13L15 10V7a5 5 0 00-5-5z" />
+                                    <path d="M8 17a2 2 0 004 0" />
+                                </svg></button>
+                            <button class="notification-icon" title="Messages"><svg viewBox="0 0 20 20" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-3 3V5a1 1 0 011-1z" />
+                                </svg></button>
+                        </div>
+                        <div class="header-profile" id="user-profile">
+                            <div class="avatar">MS</div>
+                            <div class="profile-info">
+                                <div class="profile-names">
+                                    <span class="profile-name">Mike Smith</span>
+                                    <span class="profile-role">Franchise Owner</span>
+                                </div>
+                                <div class="profile-dropdown-icon">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path d="M4 5.5l3 3 3-3" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="ro-main-container" style="flex:1; display:flex; overflow:hidden;">
+                <!-- SCHEDULER (Left/Center part of main) -->
+                <div class="adv-scheduler" id="scheduler-container">
+
+                    <!-- AI modal overlays only the scheduler map -->
+                    <div class="ai-modal-overlay" id="ai-working-modal">
+                        <div class="ai-working-content">
+                            <div class="ai-spinner">
+                                <div class="ai-circle"></div>
+                                <div class="ai-circle delay-1"></div>
+                                <div class="ai-circle delay-2"></div>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <h3 id="ai-working-title">Optimizing Routes...</h3>
+                            <p id="ai-working-desc">Recalculating spatial distances and assigning nearest neighbors.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="adv-tabs" style="border-top: none;">
+                        <div class="tab-list">
+                            <span>Global</span>
+                            <span>Sites</span>
+                            <span>Runsheets</span>
+                            <span>Location</span>
+                            <span class="active">Officer</span>
+                            <span>Custom Views (1)</span>
+                        </div>
+                        <div class="tab-actions">
+                            <button>+ Add Custom view</button>
+                            <button style="border:1px solid #e0f2fe; margin-left:16px;">✨ Auto Assign</button>
+                            <button>+ Create ▼</button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="adv-filters">
+                        <div class="filter-group">
+                            <div class="f-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width:14px;height:14px;">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                Sites ▼
+                            </div>
+                            <div class="f-btn">Shifts ▼</div>
+                            <div class="f-btn">Officer ▼</div>
+                            <div class="f-btn">Status ▼</div>
+                            <div class="f-btn text-blue" style="border:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width:14px;height:14px;">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                </svg>
+                                Filters
+                            </div>
+                        </div>
+                        <div class="date-group">
+                            <div class="f-btn">Show ▼</div>
+                            <div class="date-nav">
+                                <span style="cursor:pointer">&lt;</span>
+                                <span>Jan 19 - Jan 25, 2026</span>
+                                <span style="cursor:pointer">&gt;</span>
+                            </div>
+                            <div class="view-toggle">
+                                <button>Day</button>
+                                <button class="active">Week</button>
+                                <button>Month</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Wrapper -->
+                    <div class="adv-table-wrapper">
+                        <div class="adv-table">
+                            <!-- Header Row -->
+                            <div class="adv-tr adv-thead">
+                                <div class="adv-th adv-cell-officer">Officers</div>
+                                <div class="adv-th"><span>SUN <strong>19</strong></span></div>
+                                <div class="adv-th"><span>MON <strong>20</strong></span></div>
+                                <div class="adv-th"><span>TUE <strong>21</strong></span></div>
+                                <div class="adv-th active"><span style="color:#146DFF;">WED</span>
+                                    <span><strong>22</strong></span></div>
+                                <div class="adv-th"><span>THU <strong>23</strong></span></div>
+                                <div class="adv-th"><span>FRI <strong>24</strong></span></div>
+                                <div class="adv-th"><span>SAT <strong>25</strong></span></div>
+                            </div>
+
+                            <!-- Row 0: Aleena Javed (Static Reference) -->
+                            <div class="adv-tr">
+                                <div class="adv-td adv-cell-officer">
+                                    <div class="officer-avatar"
+                                        style="background-image: url('https://i.pravatar.cc/150?img=1');"></div>
+                                    <div class="officer-info">
+                                        <span class="officer-name">Aleena Javed</span>
+                                        <span class="officer-meta">6 Runsheets • <span
+                                                class="badge-patrol">Patrol</span></span>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">9:30a - 11:30p</div>
+                                        <div class="card-title">Tour Template 1</div>
+                                        <div class="card-loc">Orlando Day Time</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">9:30a - 11:30p</div>
+                                        <div class="card-title">Tour Template 1</div>
+                                        <div class="card-loc">Orlando Day Time</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">9:30a - 11:30p</div>
+                                        <div class="card-title">Tour Template 1</div>
+                                        <div class="card-loc">Orlando Day Time</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card orange">
+                                        <div class="card-time">9:30a - 11:30p</div>
+                                        <div class="card-title">Tour Template 1</div>
+                                        <div class="card-loc">Orlando Day Time</div>
+                                        <div class="card-icon icon-orange"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">9:30a - 11:30p</div>
+                                        <div class="card-title">Tour Template 1</div>
+                                        <div class="card-loc">Orlando Day Time</div>
+                                        <div class="card-icon icon-green">✔</div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">9:30a - 11:30p</div>
+                                        <div class="card-title">Tour Template 1</div>
+                                        <div class="card-loc">Orlando Day Time</div>
+                                        <div class="card-icon icon-green">✔</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 1: John Doe (Dynamic Story Character) -->
+                            <div class="adv-tr" id="row-john">
+                                <div class="adv-td adv-cell-officer">
+                                    <div class="officer-avatar"
+                                        style="background-image: url('https://i.pravatar.cc/150?img=11');">JD</div>
+                                    <div class="officer-info">
+                                        <span class="officer-name">John Doe</span>
+                                        <span class="officer-meta"><span id="john-hits">25 hits</span> • <span
+                                                class="badge-patrol">Patrol</span></span>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">8:00a - 4:00p</div>
+                                        <div class="card-title">Zone A Coverage</div>
+                                        <div class="card-loc">Manhattan South</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">8:00a - 4:00p</div>
+                                        <div class="card-title">Zone A Coverage</div>
+                                        <div class="card-loc">Manhattan South</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <!-- Today (Wednesday) for John -->
+                                <div class="adv-td" id="cell-john-wed">
+                                    <div class="sch-card orange" id="card-john">
+                                        <div class="card-time"><span id="john-time">8:00a - 4:00p</span></div>
+                                        <div class="card-title">Zone A Coverage</div>
+                                        <div class="card-loc">Manhattan South</div>
+                                        <div class="card-icon icon-orange"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td">
+                                    <div class="sch-card green">
+                                        <div class="card-time">8:00a - 4:00p</div>
+                                        <div class="card-title">Zone A Coverage</div>
+                                        <div class="card-loc">Manhattan South</div>
+                                        <div class="card-icon icon-green">✔</div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card green">
+                                        <div class="card-time">8:00a - 4:00p</div>
+                                        <div class="card-title">Zone A Coverage</div>
+                                        <div class="card-loc">Manhattan South</div>
+                                        <div class="card-icon icon-green">✔</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Carlos Mendez (Dynamic Story Character) -->
+                            <div class="adv-tr" id="row-carlos">
+                                <div class="adv-td adv-cell-officer">
+                                    <div class="officer-avatar"
+                                        style="background-image: url('https://i.pravatar.cc/150?img=12');">CM</div>
+                                    <div class="officer-info">
+                                        <span class="officer-name">Carlos Mendez</span>
+                                        <span class="officer-meta"><span id="carlos-hits">32 hits</span> • <span
+                                                class="badge-patrol">Patrol</span></span>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">10:00a - 6:00p</div>
+                                        <div class="card-title">Zone B Rapid Response</div>
+                                        <div class="card-loc">Harlem North</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <!-- Today (Wednesday) for Carlos -->
+                                <div class="adv-td" id="cell-carlos-wed">
+                                    <div class="sch-card orange" id="card-carlos" style="transform-origin: center;">
+                                        <div class="card-time">10:00a - 6:00p</div>
+                                        <div class="card-title"><span id="car-alert"
+                                                style="display:none; color:red">⚠</span> Zone B Rapid Response</div>
+                                        <div class="card-loc">Harlem North</div>
+                                        <div class="card-icon icon-orange"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">10:00a - 6:00p</div>
+                                        <div class="card-title">Zone B Rapid Response</div>
+                                        <div class="card-loc">Harlem North</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                            </div>
+
+                            <!-- Row 3: Sophia Khan (Dynamic Story Character) -->
+                            <div class="adv-tr" id="row-sophia">
+                                <div class="adv-td adv-cell-officer">
+                                    <div class="officer-avatar"
+                                        style="background-image: url('https://i.pravatar.cc/150?img=5');">SK</div>
+                                    <div class="officer-info">
+                                        <span class="officer-name">Sophia Khan</span>
+                                        <span class="officer-meta"><span id="sophia-hits">18 hits</span> • <span
+                                                class="badge-patrol">Patrol</span></span>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">7:00a - 3:00p</div>
+                                        <div class="card-title">Zone C Light Duty</div>
+                                        <div class="card-loc">Queens Industrial</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">7:00a - 3:00p</div>
+                                        <div class="card-title">Zone C Light Duty</div>
+                                        <div class="card-loc">Queens Industrial</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td"></div>
+                                <div class="adv-td"></div>
+                                <!-- Today (Wednesday) for Sophia actually moved out to make space for the drop -->
+                                <div class="adv-td" id="cell-sophia-wed">
+                                    <div class="sch-card blue" id="card-sophia">
+                                        <div class="card-time">7:00a - 3:00p</div>
+                                        <div class="card-title">Zone C Light Duty</div>
+                                        <div class="card-loc">Queens Industrial</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">7:00a - 3:00p</div>
+                                        <div class="card-title">Zone C Light Duty</div>
+                                        <div class="card-loc">Queens Industrial</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="adv-td">
+                                    <div class="sch-card blue">
+                                        <div class="card-time">7:00a - 3:00p</div>
+                                        <div class="card-title">Zone C Light Duty</div>
+                                        <div class="card-loc">Queens Industrial</div>
+                                        <div class="card-icon icon-blue"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer details legend -->
+                    <div class="adv-footer">
+                        <div class="legend-item"><span class="dot green"></span> Completed <span>52</span></div>
+                        <div class="legend-item"><span class="dot blue"></span> In progress <span>12</span></div>
+                        <div class="legend-item"><span class="dot orange"></span> Not started <span>32</span></div>
+                        <div class="legend-item"><span class="dot red"></span> Unassigned <span>24</span></div>
+                        <div class="legend-item" style="border-left:1px solid #e2e8f0; padding-left:24px;">Dedicated
+                            <span>342</span></div>
+                        <div class="legend-item">Patrol <span>91</span></div>
+                        <div class="legend-item">Extra Job <span>20</span></div>
+                        <div class="legend-item">Dispatch <span>29</span></div>
+                    </div>
+                </div>
+
+                <!-- CHAT PANEL (Right) -->
+                <div class="ro-chat-panel">
+                    <div class="ro-chat-header">
+                        <div class="ro-agent-avatar">
+                            <!-- Bot / AI icon -->
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                                <circle cx="12" cy="5" r="2"></circle>
+                                <path d="M12 7v4"></path>
+                                <line x1="8" y1="16" x2="8" y2="16"></line>
+                                <line x1="16" y1="16" x2="16" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="ro-agent-info">
+                            <h1>Route Intelligence</h1>
+                            <div class="status"><span></span> Shift Active</div>
+                        </div>
+                    </div>
+
+                    <div class="ro-chat-messages" id="chat-messages">
+                        <!-- Messages go here -->
+                    </div>
+
+                    <div class="ro-chat-input-area">
+                        <div class="ro-quick-actions" id="quick-actions">
+                            <!-- Quick actions injected by JS -->
+                        </div>
+                        <div class="ro-input-wrapper">
+                            <input type="text" id="user-input" placeholder="Ask about schedules or optimizations..."
+                                readonly>
+                            <button id="send-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width:18px;height:18px;">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="route-optimization.js"></script>
+    <script>
+        // Optional sidebar collapse toggle
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const layout = document.getElementById('app-layout');
+        if (toggleBtn && layout) {
+            toggleBtn.addEventListener('click', () => {
+                layout.classList.toggle('sidebar-collapsed');
+            });
+        }
+    </script>
+</body>
+
+</html>

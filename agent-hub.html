@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Auto Pilot - AI Agent Hub for Signal Intelligence">
+    <title>Auto Pilot | Signal Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="agent-hub.css?v=7">
+    <link rel="stylesheet" href="agent-config.css">
+    <link rel="stylesheet" href="agent-config-page.css">
+    <style>
+        .ap-content>.ap-cards-row:nth-of-type(2) {
+            display: none !important;
+        }
+
+        .ap-agents-row>.ap-agent-card:nth-child(8),
+        .ap-agents-row>.ap-agent-card:nth-child(10) {
+            display: none !important;
+        }
+
+        /* Layout for 4 agents per row */
+        @media (min-width: 1025px) {
+            .ap-agents-row {
+                display: flex !important;
+                flex-wrap: wrap !important;
+            }
+
+            .ap-agent-card {
+                flex: 0 0 25% !important;
+                border-right: 1px solid #E6E6E7 !important;
+                border-bottom: 1px solid #E6E6E7 !important;
+            }
+
+            /* Remove right border from the end of each visual row */
+            .ap-agents-row>.ap-agent-card:nth-child(4),
+            .ap-agents-row>.ap-agent-card:nth-child(9) {
+                border-right: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout" id="app-layout">
+
+        <!-- ===== SIDEBAR NAVIGATION ===== -->
+        <nav class="sidebar" id="sidebar" aria-label="Main Navigation">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 22l6-10h10l-6 10H4z" fill="#FF9332" />
+                    <path d="M14 10l6-10h10l-6 10H14z" fill="#FF9332" />
+                </svg>
+            </div>
+            <div class="sidebar-nav">
+                <!-- Dashboard -->
+                <button class="sidebar-nav-item" title="Dashboard">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="6" height="6" rx="1" />
+                        <rect x="12" y="2" width="6" height="6" rx="1" />
+                        <rect x="2" y="12" width="6" height="6" rx="1" />
+                        <rect x="12" y="12" width="6" height="6" rx="1" />
+                    </svg>
+                </button>
+                <!-- Signal/Map -->
+                <button class="sidebar-nav-item" title="Signal Map">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="10" cy="10" r="8" />
+                        <path d="M2 10h16" />
+                        <path d="M10 2c2.5 2 4 5 4 8s-1.5 6-4 8c-2.5-2-4-5-4-8s1.5-6 4-8z" />
+                    </svg>
+                </button>
+                <!-- Schedule (Active) -->
+                <button class="sidebar-nav-item" title="Schedule" onclick="window.location.href='index.html'"
+                    id="nav-schedule">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="4" width="14" height="14" rx="2" />
+                        <path d="M3 8h14" />
+                        <path d="M7 2v4" />
+                        <path d="M13 2v4" />
+                    </svg>
+                </button>
+                <!-- Agent Studio -->
+                <button class="sidebar-nav-item active" title="Agent Studio" id="nav-agent-studio">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="transform: scale(0.85); transform-origin: center;">
+                        <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z"
+                            stroke-linejoin="round" />
+                        <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <!-- Users -->
+                <button class="sidebar-nav-item" title="Users" style="position: relative;">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="10" cy="7" r="3" />
+                        <path d="M4 18c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+                    </svg>
+                    <span class="nav-dot"></span>
+                </button>
+                <!-- Settings -->
+                <button class="sidebar-nav-item" title="Settings">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="10" cy="10" r="3" />
+                        <path
+                            d="M10 1.5v2m0 13v2m-6-8.5h-2m16 0h-2m-1.5-5L13 6.5m-8 7L6.5 15m9.5-2l-1.5-1.5m-11 0L5 13" />
+                    </svg>
+                </button>
+            </div>
+            <button class="sidebar-toggle" id="sidebar-toggle" title="Collapse sidebar">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M8 2L4 6l4 4" />
+                </svg>
+            </button>
+        </nav>
+
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="ap-main">
+
+            <!-- Header -->
+            <header class="header" id="page-header"
+                style="border-bottom: 1px solid #E5E5EA; background: white; z-index: 10;">
+                <div class="header-left">
+                    <div class="breadcrumb">
+                        <div class="breadcrumb-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                style="width:20px;height:20px;">
+                                <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z"
+                                    stroke-linejoin="round" />
+                                <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <span class="breadcrumb-text">Agent Studio</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-location">
+                        <span class="badge badge--brand">US Central Time</span>
+                        <span class="badge badge--brand">ID: 1234</span>
+                        <button class="location-dropdown" id="location-dropdown">
+                            <span>#709 Columbus, Georgia</span>
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round">
+                                <path d="M6 8l4 4 4-4" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="header-actions">
+                        <div class="header-notifications">
+                            <button class="notification-icon" title="Notifications"><svg viewBox="0 0 20 20" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M10 2a5 5 0 00-5 5v3l-1.5 2h13L15 10V7a5 5 0 00-5-5z" />
+                                    <path d="M8 17a2 2 0 004 0" />
+                                </svg></button>
+                            <button class="notification-icon" title="Messages"><svg viewBox="0 0 20 20" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-3 3V5a1 1 0 011-1z" />
+                                </svg></button>
+                        </div>
+                        <div class="header-profile" id="user-profile">
+                            <div class="avatar">MS</div>
+                            <div class="profile-info">
+                                <div class="profile-names">
+                                    <span class="profile-name">Mike Smith</span>
+                                    <span class="profile-role">Franchise Owner</span>
+                                </div>
+                                <div class="profile-dropdown-icon">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path d="M4 5.5l3 3 3-3" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ===== TITLE ROW ===== -->
+            <div class="ap-title-row">
+                <div class="ap-title-left">
+                    <h1 class="ap-page-title">Auto Pilot</h1>
+                </div>
+                <div class="ap-title-right">
+                    <button class="ap-view-btn" id="view-list" title="List view">
+                        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 4h10M4 9h10M4 14h10" />
+                        </svg>
+                    </button>
+                    <div class="ap-view-sep"></div>
+                    <button class="ap-view-btn active" id="view-grid" title="Grid view">
+                        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="4.5" height="4.5" rx="0.5" />
+                            <rect x="10.5" y="3" width="4.5" height="4.5" rx="0.5" />
+                            <rect x="3" y="10.5" width="4.5" height="4.5" rx="0.5" />
+                            <rect x="10.5" y="10.5" width="4.5" height="4.5" rx="0.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== TABS + ACTIONS ===== -->
+            <div class="ap-tabs-row">
+                <div class="ap-tabs" id="ap-tabs">
+                    <button class="ap-tab active" data-tab="all">All</button>
+                    <button class="ap-tab" data-tab="set">Set</button>
+                    <button class="ap-tab" data-tab="edge">Edge</button>
+                    <button class="ap-tab" data-tab="lots">Lots</button>
+                    <button class="ap-tab" data-tab="leads">Leads</button>
+                </div>
+                <div class="ap-tab-actions">
+                    <button class="ap-create-btn" id="create-btn">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" style="width:14px;height:14px;">
+                            <path d="M8 3v10M3 8h10" />
+                        </svg>
+                        <span>Create</span>
+                    </button>
+                    <button class="ap-icon-action" title="Voice">
+                        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="7" y="2" width="4" height="9" rx="2" />
+                            <path d="M3 9a6 6 0 0012 0" />
+                            <path d="M9 15v2" />
+                        </svg>
+                    </button>
+                    <button class="ap-icon-action" title="Messages">
+                        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M16 11a2 2 0 01-2 2H6l-4 4V4a2 2 0 012-2h10a2 2 0 012 2v7z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== AUTO PILOT CARDS GRID ===== -->
+            <div class="ap-content" id="ap-content">
+
+                <!-- Row 1 — 3 cards -->
+                <div class="ap-cards-row">
+                    <div class="ap-card" id="card-orchestrator">
+                        <div class="ap-card-header">
+                            <span class="ap-card-title">01 - Signal Orchestrator</span>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo"
+                                    onclick="window.location.href='ai-orchestrator.html'">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="ap-card-desc">Watches the full pipeline — contract sync, auto-assign, live execution,
+                            anomaly detection, forecasting, and final reporting.</p>
+                        <div class="ap-card-footer">
+                            <div class="ap-card-meta">
+                                <span class="ap-card-occ">Occurrence 07</span>
+
+                            </div>
+                            <div class="ap-card-toggle">
+                                <span class="ap-card-toggle-label">Enabled</span>
+                                <label class="ap-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="ap-toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ap-card" id="card-signal">
+                        <div class="ap-card-header">
+                            <span class="ap-card-title">02 - Signal Co-Pilot</span>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo"
+                                    onclick="window.location.href='signal-copilot.html'">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="ap-card-desc">Monitors all 8 agents in real-time, surfaces insights, and provides
+                            conversational AI assistance for operations management.</p>
+                        <div class="ap-card-footer">
+                            <div class="ap-card-meta">
+                                <span class="ap-card-occ">Occurrence 12</span>
+
+                            </div>
+                            <div class="ap-card-toggle">
+                                <span class="ap-card-toggle-label">Enabled</span>
+                                <label class="ap-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="ap-toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ap-card" id="card-scheduling">
+                        <div class="ap-card-header">
+                            <span class="ap-card-title">03 - Shifts Auto-Assignment</span>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="ap-card-desc">Meet the agent that runs your schedule for you. It monitors every
+                            activity and gets things done faster.</p>
+                        <div class="ap-card-footer">
+                            <div class="ap-card-meta">
+                                <span class="ap-card-occ">Occurrence 05</span>
+
+                            </div>
+                            <div class="ap-card-toggle">
+                                <span class="ap-card-toggle-label">Enabled</span>
+                                <label class="ap-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="ap-toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2 — 2 cards -->
+                <div class="ap-cards-row">
+                    <div class="ap-card" id="card-ticketing">
+                        <div class="ap-card-header">
+                            <span class="ap-card-title">04 - Ticketing System Automation</span>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="ap-card-desc">Use AI and automation to create tickets, track their status, and set up
+                            automatic reminders. Stay organized and never miss a deadline.</p>
+                        <div class="ap-card-footer">
+                            <div class="ap-card-meta">
+                                <span class="ap-card-occ">Occurrence 05</span>
+
+                            </div>
+                            <div class="ap-card-toggle">
+                                <span class="ap-card-toggle-label">Enabled</span>
+                                <label class="ap-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="ap-toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ap-card" id="card-dispatch">
+                        <div class="ap-card-header">
+                            <span class="ap-card-title">05 - Emergency Dispatch</span>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="ap-card-desc">Manages emergency dispatch and real-time officer allocation with
+                            intelligent priority routing and response optimization.</p>
+                        <div class="ap-card-footer">
+                            <div class="ap-card-meta">
+                                <span class="ap-card-occ">Occurrence 03</span>
+
+                            </div>
+                            <div class="ap-card-toggle">
+                                <span class="ap-card-toggle-label">Enabled</span>
+                                <label class="ap-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="ap-toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== SECTION: Intelligent Agents ===== -->
+                <div class="ap-section-label">
+                    <span>Intelligent Agents</span>
+                </div>
+
+                <!-- Bottom: 3 agent detail cards -->
+                <div class="ap-agents-row" id="ap-agents-row">
+                    <!-- Card 1: Contract Intelligence Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#4CAF50; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                📄
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo"
+                                    onclick="window.location.href='contract-intelligence.html'">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Contract Intelligence Agent</h3>
+                            <p class="ap-agent-desc">Converts sales contracts into operational blueprints. Assesses
+                                service hours and SLA rules.</p>
+                        </div>
+                    </div>
+                    <!-- Card 2: Scheduling Optimization Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#FFB300; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                📅
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo"
+                                    onclick="window.location.href='scheduling-optimization.html'">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Scheduling Optimization Agent</h3>
+                            <p class="ap-agent-desc">Builds and maintains compliant shift rosters. Minimizes overtime
+                                and automatically suggests swaps.</p>
+                        </div>
+                    </div>
+                    <!-- Card 3: Employee Intelligence Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#795548; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                👤
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo" disabled
+                                    style="opacity: 0.4; cursor: not-allowed;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Employee Intelligence Agent</h3>
+                            <p class="ap-agent-desc">Maintains officer eligibility, constraints, and tracks hours.
+                                Filters and ranks assignable officers.</p>
+                        </div>
+                    </div>
+                    <!-- Card 4: Tour Design Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#146DFF; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                🔍
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo" disabled
+                                    style="opacity: 0.4; cursor: not-allowed;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Tour Design Agent</h3>
+                            <p class="ap-agent-desc">Builds smart tour structures for dedicated sites with risk-based
+                                validation and sequence randomization.</p>
+                        </div>
+                    </div>
+                    <!-- Card 5: Route Optimization Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#8B5CF6; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                🗺
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo"
+                                    onclick="window.location.href='route-optimization.html'">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Route Optimization Agent</h3>
+                            <p class="ap-agent-desc">Optimizes patrol sequencing. Adjusts based on traffic, predicting
+                                ETA to minimize travel waste.</p>
+                        </div>
+                    </div>
+                    <!-- Card 6: Dispatch Response Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#E43F32; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                🚨
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo" disabled
+                                    style="opacity: 0.4; cursor: not-allowed;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Dispatch Response Agent</h3>
+                            <p class="ap-agent-desc">Manages emergency assignments. Finds the nearest compatible officer
+                                and tracks SLA response.</p>
+                        </div>
+                    </div>
+                    <!-- Card 7: Monitoring & Anomaly Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#F4780B; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                📡
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo" disabled
+                                    style="opacity: 0.4; cursor: not-allowed;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Monitoring & Anomaly Agent</h3>
+                            <p class="ap-agent-desc">Oversees live execution. Detects missed checkpoints, idle time, and
+                                flags any route deviation.</p>
+                        </div>
+                    </div>
+                    <!-- Card 8: Performance Intelligence Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#546E7A; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                📊
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Performance Intelligence Agent</h3>
+                            <p class="ap-agent-desc">Measures operational efficiency. Tracks labor metrics, evaluates
+                                tour integrity, and scores officers.</p>
+                        </div>
+                    </div>
+                    <!-- Card 9: Forecasting & Demand Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#00BCD4; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                📈
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo" disabled
+                                    style="opacity: 0.4; cursor: not-allowed;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Forecasting & Demand Agent</h3>
+                            <p class="ap-agent-desc">Predicts future staffing needs based on patrol load history and
+                                detects potential burnout trends.</p>
+                        </div>
+                    </div>
+                    <!-- Card 10: Reporting & Compliance Agent -->
+                    <div class="ap-agent-card">
+                        <div class="ap-agent-header">
+                            <div class="ap-agent-icon"
+                                style="background:#607D8B; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; border-radius:10px;">
+                                📝
+                            </div>
+                            <div class="ap-card-actions">
+                                <button class="ap-card-action-btn demo-btn" title="Start Demo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                                <button class="ap-card-action-btn view-config" title="Configuration">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ap-agent-body">
+                            <h3 class="ap-agent-name">Reporting & Compliance Agent</h3>
+                            <p class="ap-agent-desc">Automates documentation and audit readiness. Compiles tour
+                                completion data into client-ready summaries.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /ap-content -->
+
+            <!-- ===== LIST VIEW PANEL ===== -->
+            <div class="ap-list-view" id="ap-list-view" style="display:none;">
+
+                <!-- Left Panel: Agent List -->
+                <div class="lv-left-panel" id="lv-left-panel">
+                    <div class="lv-panel-header">
+                        <span class="lv-panel-title">Agents</span>
+                        <span class="lv-panel-count" id="lv-agent-count">9 agents</span>
+                    </div>
+                    <div class="lv-search-box">
+                        <div class="lv-search-inner">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
+                            </svg>
+                            <input type="text" placeholder="Search agents..." id="lv-search-input">
+                        </div>
+                    </div>
+                    <div class="lv-filter-chips">
+                        <span class="lv-chip active">All</span>
+                        <span class="lv-chip">Enabled</span>
+                        <span class="lv-chip">Ops</span>
+                        <span class="lv-chip">AI</span>
+                        <span class="lv-chip">Analytics</span>
+                    </div>
+                    <div class="lv-agents-list" id="lv-agents-list">
+                        <!-- SECTION: SYSTEM -->
+                        <div class="lv-list-section">
+                            <span class="lv-section-title">System</span>
+                            <span class="lv-section-desc">Core agents that coordinate and assist across the
+                                platform</span>
+                        </div>
+
+                        <!-- Agent: Signal Orchestrator -->
+                        <div class="lv-accordion-group expanded">
+                            <div class="lv-agent-item active system-agent" data-agent="orchestrator">
+                                <div class="lv-agent-icon" style="background:linear-gradient(135deg,#146DFF,#3B8CFF);">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z"
+                                            stroke-linejoin="round" />
+                                        <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Signal</span>
+                                    <div class="lv-agent-meta">
+                                        <span class="lv-system-badge">SYSTEM</span>
+
+                                        <span class="lv-agent-run-count">07 runs</span>
+                                    </div>
+                                </div>
+                                <div class="lv-agent-status enabled system-glow"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:14px;height:14px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content with-connection-line">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Pipeline Monitor</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Auto-Assign Engine</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Live Execution Handler</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Signal Co-Pilot -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item system-agent" data-agent="copilot">
+                                <div class="lv-agent-icon" style="background:linear-gradient(135deg,#8B5CF6,#a78bfa);">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-4 4V5a1 1 0 011-1z" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Signal Co-Pilot</span>
+                                    <div class="lv-agent-meta">
+                                        <span class="lv-system-badge">SYSTEM</span>
+                                        <span class="lv-agent-run-count">12 runs</span>
+                                    </div>
+                                </div>
+                                <div class="lv-agent-status enabled system-glow"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:14px;height:14px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Context Analyzer</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path
+                                                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 4l8 5 8-5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Data Router</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Response Generator</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION: AGENTS -->
+                        <div class="lv-list-section">
+                            <span class="lv-section-title">Agents</span>
+                        </div>
+
+                        <!-- Agent: Scheduling Optimization -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="scheduling">
+                                <div class="lv-agent-icon" style="background:#FFB300;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                                        <path d="M3 9h18" />
+                                        <path d="M8 2v4M16 2v4" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Scheduling Optimization</span>
+                                    <span class="lv-agent-category">Operations</span>
+                                </div>
+                                <div class="lv-agent-status enabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Shift Generator</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Availability Checker</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Compliance Enforcer</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Contract Intelligence -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="contract">
+                                <div class="lv-agent-icon" style="background:#4CAF50;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Contract Intelligence</span>
+                                    <span class="lv-agent-category">Compliance</span>
+                                </div>
+                                <div class="lv-agent-status enabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>SLA Parser</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Rate Calculator</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Term Extractor</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Route Optimization -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="route">
+                                <div class="lv-agent-icon" style="background:#8B5CF6;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <circle cx="12" cy="10" r="3" />
+                                        <path
+                                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Route Optimization</span>
+                                    <span class="lv-agent-category">Logistics</span>
+                                </div>
+                                <div class="lv-agent-status enabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Map Matrix Evaluator</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Traffic Monitor</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Dispatch Router</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Employee Intelligence -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="employee">
+                                <div class="lv-agent-icon" style="background:#795548;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <circle cx="12" cy="8" r="4" />
+                                        <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Employee Intelligence</span>
+                                    <span class="lv-agent-category">HR & Staffing</span>
+                                </div>
+                                <div class="lv-agent-status disabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Credential Validator</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Performance Scorer</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Fatigue Monitor</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Monitoring & Anomaly -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="monitoring">
+                                <div class="lv-agent-icon" style="background:#F4780B;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Monitoring & Anomaly</span>
+                                    <span class="lv-agent-category">Surveillance</span>
+                                </div>
+                                <div class="lv-agent-status disabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Pattern Recognizer</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path
+                                                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 4l8 5 8-5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>False-positive Filter</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Alert Trigger</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Dispatch Response -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="dispatch">
+                                <div class="lv-agent-icon" style="background:#E43F32;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Dispatch Response</span>
+                                    <span class="lv-agent-category">Emergency</span>
+                                </div>
+                                <div class="lv-agent-status disabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Proximity Matcher</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>ETA Estimator</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Escalation Manager</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agent: Performance Intelligence -->
+                        <div class="lv-accordion-group">
+                            <div class="lv-agent-item" data-agent="performance">
+                                <div class="lv-agent-icon" style="background:#546E7A;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                        style="width:16px;height:16px;">
+                                        <line x1="18" y1="20" x2="18" y2="10" />
+                                        <line x1="12" y1="20" x2="12" y2="4" />
+                                        <line x1="6" y1="20" x2="6" y2="14" />
+                                    </svg>
+                                </div>
+                                <div class="lv-agent-info">
+                                    <span class="lv-agent-name">Performance Intelligence</span>
+                                    <span class="lv-agent-category">Analytics</span>
+                                </div>
+                                <div class="lv-agent-status enabled"></div>
+                                <div class="lv-accordion-chevron" onclick="toggleAccordion(event, this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="lv-accordion-content">
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Metric Aggregator</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Analytics Engine</span>
+                                </div>
+                                <div class="lv-sub-agent-item">
+                                    <div class="lv-sub-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            style="width:12px;height:12px;">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span>Dashboard Renderer</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Panel: Agent Detail -->
+                <div class="lv-right-panel" id="lv-right-panel">
+
+                    <!-- Detail for: Signal Orchestrator -->
+                    <div class="lv-detail-view active" data-detail="orchestrator">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#146DFF,#4a90ff);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:30px;height:30px;">
+                                    <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z"
+                                        stroke-linejoin="round" />
+                                    <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Signal Orchestrator</h2>
+                                <div class="lv-detail-sub-row">
+                                    <span class="lv-detail-badge enabled">Enabled</span>
+
+                                </div>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary"
+                                    onclick="window.location.href='config-orchestrator.html'">Configure</button>
+                                <button class="lv-action-btn primary"
+                                    onclick="window.location.href='ai-orchestrator.html'">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Start Demo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+
+                            <!-- LEFT 60% — Info Column -->
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Watches the full pipeline — contract sync, auto-assign, live execution, anomaly
+                                        detection, forecasting, and final reporting. Serves as the master control layer
+                                        that orchestrates all 8 intelligent agents working in concert.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Occurrences</span>
+                                        <span class="lv-stat-value">07</span>
+                                        <span class="lv-stat-trend">↑ 2 this week</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Agents Managed</span>
+                                        <span class="lv-stat-value">8</span>
+                                        <span class="lv-stat-trend">All active</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Uptime</span>
+                                        <span class="lv-stat-value">99.8%</span>
+                                        <span class="lv-stat-trend">30-day avg</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Avg Response</span>
+                                        <span class="lv-stat-value">120ms</span>
+                                        <span class="lv-stat-trend">↓ 12% faster</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <div class="lv-section-header">
+                                        <h3 class="lv-section-title">Capabilities</h3>
+                                    </div>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Contract Sync</span>
+                                        <span class="lv-cap-tag">Auto-Assign</span>
+                                        <span class="lv-cap-tag">Live Execution</span>
+                                        <span class="lv-cap-tag">Anomaly Detection</span>
+                                        <span class="lv-cap-tag">Forecasting</span>
+                                        <span class="lv-cap-tag">Reporting</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <div class="lv-section-header">
+                                        <h3 class="lv-section-title">Workflow & Process Story</h3>
+                                    </div>
+                                    <div class="lv-workflow-story">
+                                        <div class="lv-story-step">
+                                            <div class="lv-story-icon"
+                                                style="background:rgba(20,109,255,0.1); color:#146DFF;">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" style="width:18px;height:18px;">
+                                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </div>
+                                            <div class="lv-story-content">
+                                                <div class="lv-story-title">Step 1: Pipeline Monitor</div>
+                                                <div class="lv-story-desc">Constantly monitors the scheduling and
+                                                    dispatch pipelines for incoming data and events.</div>
+                                            </div>
+                                        </div>
+                                        <div class="lv-story-step">
+                                            <div class="lv-story-icon"
+                                                style="background:rgba(20,109,255,0.1); color:#146DFF;">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" style="width:18px;height:18px;">
+                                                    <circle cx="12" cy="12" r="3" />
+                                                    <path
+                                                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                                </svg>
+                                            </div>
+                                            <div class="lv-story-content">
+                                                <div class="lv-story-title">Step 2: Auto-Assign Engine</div>
+                                                <div class="lv-story-desc">Automatically analyzes constraints and
+                                                    dynamically assigns tasks and shifts.</div>
+                                            </div>
+                                        </div>
+                                        <div class="lv-story-step">
+                                            <div class="lv-story-icon"
+                                                style="background:rgba(20,109,255,0.1); color:#146DFF;">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" style="width:18px;height:18px;">
+                                                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </div>
+                                            <div class="lv-story-content">
+                                                <div class="lv-story-title">Step 3: Live Execution Handler</div>
+                                                <div class="lv-story-desc">Manages active operations, handling mid-task
+                                                    adjustments and real-time status updates.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Recent Activity</h3>
+                                    <div class="lv-activity-feed">
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Pipeline sync completed
+                                                    successfully</span>
+                                                <span class="lv-activity-time">2 min ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot info"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Anomaly threshold updated — sensitivity:
+                                                    High</span>
+                                                <span class="lv-activity-time">18 min ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Scheduled 14 shifts for next week
+                                                    automatically</span>
+                                                <span class="lv-activity-time">1 hr ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /lv-detail-left -->
+
+                            <!-- RIGHT 40% — Workflow Canvas -->
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas">
+                                    <div class="lv-canvas-toolbar">
+                                        <div class="lv-canvas-title-row">
+                                            <div class="lv-canvas-dot"></div>
+                                            <span class="lv-canvas-label">Pipeline</span>
+                                            <span class="lv-canvas-sub">Live</span>
+                                        </div>
+                                        <div class="lv-canvas-actions">
+                                            <button class="lv-canvas-action-btn"
+                                                onclick="window.location.href='config-orchestrator.html'">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2">
+                                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                                Expand
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Dynamic workflow container for Orchestrator -->
+                                    <div class="cfg-canvas-wrap"
+                                        style="position:relative; flex:1; min-height:0; overflow:hidden; background:transparent; display:flex; flex-direction:column;">
+                                        <svg class="cfg-canvas-svg" id="hub-svg-orchestrator"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+                                        <div class="cfg-canvas" id="hub-canvas-orchestrator"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; transform-origin: 0 0;">
+                                        </div>
+                                    </div>
+                                </div><!-- /lv-workflow-canvas -->
+                            </div><!-- /lv-detail-right -->
+
+                        </div><!-- /lv-detail-body -->
+                    </div><!-- /lv-detail-view -->
+
+
+                    <!-- Detail for: Signal Co-Pilot -->
+                    <div class="lv-detail-view" data-detail="copilot">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#8B5CF6,#a78bfa);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-4 4V5a1 1 0 011-1z" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Signal Co-Pilot</h2>
+                                <span class="lv-detail-badge enabled">Enabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary"
+                                    onclick="window.location.href='config-copilot.html'">Configure</button>
+                                <button class="lv-action-btn primary"
+                                    onclick="window.location.href='signal-copilot.html'">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Start Demo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <!-- LEFT 60% -->
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Monitors all 8 agents in real-time, surfaces insights, and provides
+                                        conversational AI
+                                        assistance for operations management. Acts as the intelligent interface layer
+                                        between human operators and automated systems.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Occurrences</span>
+                                        <span class="lv-stat-value">12</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Queries Today</span>
+                                        <span class="lv-stat-value">247</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Accuracy</span>
+                                        <span class="lv-stat-value">97.2%</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Agents Watched</span>
+                                        <span class="lv-stat-value">8</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Real-time Monitoring</span>
+                                        <span class="lv-cap-tag">Conversational AI</span>
+                                        <span class="lv-cap-tag">Insight Surfacing</span>
+                                        <span class="lv-cap-tag">Alert Management</span>
+                                        <span class="lv-cap-tag">NLP Queries</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Recent Activity</h3>
+                                    <div class="lv-activity-feed">
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Responded to 12 operator queries in
+                                                    natural language</span>
+                                                <span class="lv-activity-time">Just now</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot warning"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Surfaced anomaly alert from Monitoring
+                                                    Agent</span>
+                                                <span class="lv-activity-time">5 min ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot info"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Daily operations briefing generated and
+                                                    sent</span>
+                                                <span class="lv-activity-time">8 am today</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /lv-detail-left -->
+
+                            <!-- RIGHT 40% — Workflow Canvas -->
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas">
+                                    <div class="lv-canvas-toolbar">
+                                        <div class="lv-canvas-title-row">
+                                            <div class="lv-canvas-dot"></div>
+                                            <span class="lv-canvas-label">Co-Pilot Pipeline</span>
+                                            <span class="lv-canvas-sub">Live</span>
+                                        </div>
+                                        <div class="lv-canvas-actions">
+                                            <button class="lv-canvas-action-btn"
+                                                onclick="window.location.href='config-copilot.html'">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2">
+                                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                                Expand
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="cfg-canvas-wrap"
+                                        style="position:relative; flex:1; min-height:0; overflow:hidden; background:transparent; display:flex; flex-direction:column;">
+                                        <svg class="cfg-canvas-svg" id="hub-svg-copilot"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+                                        <div class="cfg-canvas" id="hub-canvas-copilot"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; transform-origin: 0 0;">
+                                        </div>
+                                    </div>
+                                </div><!-- /lv-workflow-canvas -->
+                            </div><!-- /lv-detail-right -->
+                        </div><!-- /lv-detail-body -->
+                    </div><!-- /lv-detail-view signal -->
+
+                    <!-- Detail for: Scheduling -->
+                    <div class="lv-detail-view" data-detail="scheduling">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#FFB300,#ffca28);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                                    <path d="M3 9h18M8 2v4M16 2v4" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Scheduling Optimization</h2>
+                                <span class="lv-detail-badge enabled">Enabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary"
+                                    onclick="window.location.href='config-scheduling.html'">Configure</button>
+                                <button class="lv-action-btn primary"
+                                    onclick="window.location.href='scheduling-optimization.html'">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Start Demo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <!-- LEFT 60% -->
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Builds and maintains compliant shift rosters. Minimizes overtime and
+                                        automatically
+                                        suggests swaps. Meet the agent that runs your schedule for you — it monitors
+                                        every
+                                        activity and gets things done faster than any human dispatcher.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Occurrences</span>
+                                        <span class="lv-stat-value">05</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Shifts Managed</span>
+                                        <span class="lv-stat-value">142</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">OT Saved</span>
+                                        <span class="lv-stat-value">34 hrs</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Auto-Swaps</span>
+                                        <span class="lv-stat-value">18</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Roster Building</span>
+                                        <span class="lv-cap-tag">Compliance Checking</span>
+                                        <span class="lv-cap-tag">Auto Swap Suggestions</span>
+                                        <span class="lv-cap-tag">Overtime Control</span>
+                                        <span class="lv-cap-tag">SLA Enforcement</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Recent Activity</h3>
+                                    <div class="lv-activity-feed">
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Auto-filled 3 open shifts for weekend
+                                                    coverage</span>
+                                                <span class="lv-activity-time">12 min ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot warning"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Overtime threshold reached — Officer J.
+                                                    Davis flagged</span>
+                                                <span class="lv-activity-time">45 min ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Weekly schedule published for Site
+                                                    #12</span>
+                                                <span class="lv-activity-time">2 hrs ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /lv-detail-left -->
+
+                            <!-- RIGHT 40% — Workflow Canvas -->
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas">
+                                    <div class="lv-canvas-toolbar">
+                                        <div class="lv-canvas-title-row">
+                                            <div class="lv-canvas-dot"></div>
+                                            <span class="lv-canvas-label">Scheduling Pipeline</span>
+                                            <span class="lv-canvas-sub">Live</span>
+                                        </div>
+                                        <div class="lv-canvas-actions">
+                                            <button class="lv-canvas-action-btn"
+                                                onclick="window.location.href='config-scheduling.html'">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2">
+                                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                                Expand
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="cfg-canvas-wrap"
+                                        style="position:relative; flex:1; min-height:0; overflow:hidden; background:transparent; display:flex; flex-direction:column;">
+                                        <svg class="cfg-canvas-svg" id="hub-svg-scheduling"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+                                        <div class="cfg-canvas" id="hub-canvas-scheduling"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; transform-origin: 0 0;">
+                                        </div>
+                                    </div>
+                                </div><!-- /lv-workflow-canvas -->
+                            </div><!-- /lv-detail-right -->
+                        </div><!-- /lv-detail-body -->
+                    </div><!-- /lv-detail-view scheduling -->
+
+
+
+
+
+                    <!-- Detail for: Contract Intelligence -->
+                    <div class="lv-detail-view" data-detail="contract">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#4CAF50,#66bb6a);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Contract Intelligence Agent</h2>
+                                <span class="lv-detail-badge enabled">Enabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary"
+                                    onclick="window.location.href='config-contract.html'">Configure</button>
+                                <button class="lv-action-btn primary"
+                                    onclick="window.location.href='contract-intelligence.html'">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Start Demo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <!-- LEFT 60% -->
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Converts sales contracts into operational blueprints. Assesses service hours and
+                                        SLA
+                                        rules, then automatically translates complex contract language into actionable
+                                        scheduling parameters and compliance requirements.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Contracts Parsed</span>
+                                        <span class="lv-stat-value">38</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">SLAs Tracked</span>
+                                        <span class="lv-stat-value">94</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Compliance</span>
+                                        <span class="lv-stat-value">100%</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Alerts Sent</span>
+                                        <span class="lv-stat-value">7</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Contract Parsing</span>
+                                        <span class="lv-cap-tag">SLA Extraction</span>
+                                        <span class="lv-cap-tag">Blueprint Generation</span>
+                                        <span class="lv-cap-tag">Compliance Audit</span>
+                                        <span class="lv-cap-tag">Auto-Alerts</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Recent Activity</h3>
+                                    <div class="lv-activity-feed">
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">New contract from ABC Corp processed and
+                                                    mapped</span>
+                                                <span class="lv-activity-time">1 hr ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot info"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">SLA renewal reminder sent for 3 expiring
+                                                    contracts</span>
+                                                <span class="lv-activity-time">3 hrs ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /lv-detail-left -->
+
+                            <!-- RIGHT 40% — Workflow Canvas -->
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas">
+                                    <div class="lv-canvas-toolbar">
+                                        <div class="lv-canvas-title-row">
+                                            <div class="lv-canvas-dot"></div>
+                                            <span class="lv-canvas-label">Contract Pipeline</span>
+                                            <span class="lv-canvas-sub">Live</span>
+                                        </div>
+                                        <div class="lv-canvas-actions">
+                                            <button class="lv-canvas-action-btn"
+                                                onclick="window.location.href='config-contract.html'">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2">
+                                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                                Expand
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="cfg-canvas-wrap"
+                                        style="position:relative; flex:1; min-height:0; overflow:hidden; background:transparent; display:flex; flex-direction:column;">
+                                        <svg class="cfg-canvas-svg" id="hub-svg-contract"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+                                        <div class="cfg-canvas" id="hub-canvas-contract"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; transform-origin: 0 0;">
+                                        </div>
+                                    </div>
+                                </div><!-- /lv-workflow-canvas -->
+                            </div><!-- /lv-detail-right -->
+                        </div><!-- /lv-detail-body -->
+                    </div><!-- /lv-detail-view -->
+
+
+                    <!-- Detail for: Route Optimization -->
+                    <div class="lv-detail-view" data-detail="route">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#8B5CF6,#a78bfa);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <circle cx="12" cy="10" r="3" />
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Route Optimization Agent</h2>
+                                <span class="lv-detail-badge enabled">Enabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary"
+                                    onclick="window.location.href='config-route.html'">Configure</button>
+                                <button class="lv-action-btn primary"
+                                    onclick="window.location.href='route-optimization.html'">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Start Demo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <!-- LEFT 60% -->
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Optimizes patrol sequencing and adjusts based on traffic, predicting ETA to
+                                        minimize
+                                        travel waste. Uses real-time data feeds to continuously update route
+                                        recommendations
+                                        across all active patrol units.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Routes Active</span>
+                                        <span class="lv-stat-value">23</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Travel Saved</span>
+                                        <span class="lv-stat-value">2.4 hrs</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Efficiency</span>
+                                        <span class="lv-stat-value">+18%</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Recalcs Today</span>
+                                        <span class="lv-stat-value">64</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Route Planning</span>
+                                        <span class="lv-cap-tag">Traffic Analysis</span>
+                                        <span class="lv-cap-tag">ETA Prediction</span>
+                                        <span class="lv-cap-tag">Real-time Adjustment</span>
+                                        <span class="lv-cap-tag">Fuel Optimization</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Recent Activity</h3>
+                                    <div class="lv-activity-feed">
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot success"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Recalculated 8 routes due to traffic
+                                                    incident
+                                                    on I-185</span>
+                                                <span class="lv-activity-time">7 min ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="lv-activity-item">
+                                            <div class="lv-activity-dot info"></div>
+                                            <div class="lv-activity-text">
+                                                <span class="lv-activity-msg">Morning patrol sequencing completed for 23
+                                                    units</span>
+                                                <span class="lv-activity-time">6 am today</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /lv-detail-left -->
+
+                            <!-- RIGHT 40% — Workflow Canvas -->
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas">
+                                    <div class="lv-canvas-toolbar">
+                                        <div class="lv-canvas-title-row">
+                                            <div class="lv-canvas-dot"></div>
+                                            <span class="lv-canvas-label">Route Pipeline</span>
+                                            <span class="lv-canvas-sub">Live</span>
+                                        </div>
+                                        <div class="lv-canvas-actions">
+                                            <button class="lv-canvas-action-btn"
+                                                onclick="window.location.href='config-route.html'">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2">
+                                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                                Expand
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="cfg-canvas-wrap"
+                                        style="position:relative; flex:1; min-height:0; overflow:hidden; background:transparent; display:flex; flex-direction:column;">
+                                        <svg class="cfg-canvas-svg" id="hub-svg-route"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+                                        <div class="cfg-canvas" id="hub-canvas-route"
+                                            style="position:absolute; top:0; left:0; width:100%; height:100%; transform-origin: 0 0;">
+                                        </div>
+                                    </div>
+                                </div><!-- /lv-workflow-canvas -->
+                            </div><!-- /lv-detail-right -->
+                        </div><!-- /lv-detail-body -->
+                    </div><!-- /lv-detail-view -->
+
+
+
+                    <!-- Detail for: Employee Intelligence -->
+                    <div class="lv-detail-view" data-detail="employee">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#795548,#a1887f);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <circle cx="12" cy="8" r="4" />
+                                    <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Employee Intelligence Agent</h2>
+                                <span class="lv-detail-badge disabled">Disabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary">Configure</button>
+                                <button class="lv-action-btn primary" disabled style="opacity:0.5;cursor:not-allowed;">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Demo N/A
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Maintains officer eligibility, constraints, and tracks hours. Filters and ranks
+                                        assignable officers based on skills, certifications, availability, and
+                                        performance
+                                        history to ensure the right person is placed on each shift.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Officers Tracked</span>
+                                        <span class="lv-stat-value">284</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Certifications</span>
+                                        <span class="lv-stat-value">1,240</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Status</span>
+                                        <span class="lv-stat-value" style="color:#E43F32;">Offline</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Eligibility Tracking</span>
+                                        <span class="lv-cap-tag">Hour Monitoring</span>
+                                        <span class="lv-cap-tag">Skill Ranking</span>
+                                        <span class="lv-cap-tag">Constraint Management</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas"
+                                    style="justify-content:center; align-items:center; display:flex; flex:1;">
+                                    <div style="text-align:center; padding:2rem; opacity:0.6;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            style="width:48px;height:48px;margin-bottom:1rem;color:#757575;">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <line x1="12" y1="8" x2="12" y2="12" />
+                                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                                        </svg>
+                                        <div style="font-size:16px; font-weight:500; color:#424242; margin-bottom:8px;">
+                                            Canvas Offline</div>
+                                        <div style="font-size:13px; color:#757575;">Enable agent to view its workflow
+                                            graph.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail for: Monitoring & Anomaly -->
+                    <div class="lv-detail-view" data-detail="monitoring">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#F4780B,#fb8c00);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Monitoring &amp; Anomaly Agent</h2>
+                                <span class="lv-detail-badge disabled">Disabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary">Configure</button>
+                                <button class="lv-action-btn primary" disabled style="opacity:0.5;cursor:not-allowed;">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Demo N/A
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Oversees live execution. Detects missed checkpoints, idle time, and flags any
+                                        route
+                                        deviation. Continuously scans telemetry from all active officers to surface
+                                        operational anomalies before they become incidents.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Alerts Today</span>
+                                        <span class="lv-stat-value">0</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Checkpoints</span>
+                                        <span class="lv-stat-value">N/A</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Status</span>
+                                        <span class="lv-stat-value" style="color:#E43F32;">Offline</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Idle Timer</span>
+                                        <span class="lv-cap-tag">Route Deviation</span>
+                                        <span class="lv-cap-tag">Missed Scan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lv-detail-right"
+                                style="padding: 1.5rem; background:#fff; border-left:1px solid #ECEFF1; overflow-y:auto;">
+                                <h3 class="lv-section-title">Workflow & Process Story</h3>
+                                <div class="lv-workflow-story">
+                                    <div class="lv-story-step">
+                                        <div class="lv-story-icon"
+                                            style="background:rgba(244,120,11,0.1); color:#F4780B;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                style="width:20px;height:20px;">
+                                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <div class="lv-story-content">
+                                            <div class="lv-story-title">Step 1: Pattern Recognizer</div>
+                                            <div class="lv-story-desc">Establishes a baseline of normal operational
+                                                behavior using historical data.</div>
+                                        </div>
+                                    </div>
+                                    <div class="lv-story-step">
+                                        <div class="lv-story-icon"
+                                            style="background:rgba(244,120,11,0.1); color:#F4780B;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                style="width:20px;height:20px;">
+                                                <path
+                                                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 4l8 5 8-5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <div class="lv-story-content">
+                                            <div class="lv-story-title">Step 2: False-positive Filter</div>
+                                            <div class="lv-story-desc">Applies secondary logic to suppress alert noise
+                                                and identify true anomalies.</div>
+                                        </div>
+                                    </div>
+                                    <div class="lv-story-step">
+                                        <div class="lv-story-icon"
+                                            style="background:rgba(244,120,11,0.1); color:#F4780B;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                style="width:20px;height:20px;">
+                                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M22 4L12 14.01l-3-3" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <div class="lv-story-content">
+                                            <div class="lv-story-title">Step 3: Alert Trigger</div>
+                                            <div class="lv-story-desc">Dispatches prioritized warnings to the AI
+                                                Orchestrator for immediate mitigation.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail for: Dispatch Response -->
+                    <div class="lv-detail-view" data-detail="dispatch">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#E43F32,#ef5350);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Dispatch Response Agent</h2>
+                                <span class="lv-detail-badge disabled">Disabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary">Configure</button>
+                                <button class="lv-action-btn primary" disabled style="opacity:0.5;cursor:not-allowed;">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Demo N/A
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Manages emergency assignments. Finds the nearest compatible officer and tracks
+                                        SLA
+                                        response time from incident creation through resolution to ensure critical
+                                        situations are handled with speed and precision.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Status</span>
+                                        <span class="lv-stat-value" style="color:#E43F32;">Offline</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Incidents</span>
+                                        <span class="lv-stat-value">N/A</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lv-detail-right">
+                                <h3 class="lv-canvas-section-label">Workflow Canvas</h3>
+                                <div class="lv-workflow-canvas"
+                                    style="justify-content:center; align-items:center; display:flex; flex:1;">
+                                    <div style="text-align:center; padding:2rem; opacity:0.6;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            style="width:48px;height:48px;margin-bottom:1rem;color:#757575;">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <line x1="12" y1="8" x2="12" y2="12" />
+                                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                                        </svg>
+                                        <div style="font-size:16px; font-weight:500; color:#424242; margin-bottom:8px;">
+                                            Canvas Offline</div>
+                                        <div style="font-size:13px; color:#757575;">Enable agent to view its workflow
+                                            graph.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail for: Performance Intelligence -->
+                    <div class="lv-detail-view" data-detail="performance">
+                        <div class="lv-detail-header">
+                            <div class="lv-detail-icon" style="background:linear-gradient(135deg,#546E7A,#78909c);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                                    style="width:28px;height:28px;">
+                                    <line x1="18" y1="20" x2="18" y2="10" />
+                                    <line x1="12" y1="20" x2="12" y2="4" />
+                                    <line x1="6" y1="20" x2="6" y2="14" />
+                                </svg>
+                            </div>
+                            <div class="lv-detail-title-block">
+                                <h2 class="lv-detail-name">Performance Intelligence Agent</h2>
+                                <span class="lv-detail-badge enabled">Enabled</span>
+                            </div>
+                            <div class="lv-detail-actions">
+                                <button class="lv-action-btn secondary">Configure</button>
+                                <button class="lv-action-btn primary">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:12px;height:12px;">
+                                        <polygon points="3 2 13 8 3 14 3 2" />
+                                    </svg>
+                                    Start Demo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lv-detail-body lv-detail-body--split">
+                            <div class="lv-detail-left">
+                                <div class="lv-detail-desc">
+                                    <p>Measures operational efficiency. Tracks labor metrics, evaluates tour integrity,
+                                        and
+                                        scores officers based on punctuality, checkpoint completion, and incident
+                                        handling.
+                                        Generates weekly performance reports automatically.</p>
+                                </div>
+                                <div class="lv-detail-stats">
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Reports Generated</span>
+                                        <span class="lv-stat-value">52</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Avg Score</span>
+                                        <span class="lv-stat-value">87/100</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Tours Scored</span>
+                                        <span class="lv-stat-value">318</span>
+                                    </div>
+                                    <div class="lv-stat-card">
+                                        <span class="lv-stat-label">Top Performer</span>
+                                        <span class="lv-stat-value">J. Torres</span>
+                                    </div>
+                                </div>
+                                <div class="lv-detail-section">
+                                    <h3 class="lv-section-title">Capabilities</h3>
+                                    <div class="lv-capabilities">
+                                        <span class="lv-cap-tag">Labor Tracking</span>
+                                        <span class="lv-cap-tag">Officer Scoring</span>
+                                        <span class="lv-cap-tag">Tour Evaluation</span>
+                                        <span class="lv-cap-tag">Auto Reporting</span>
+                                        <span class="lv-cap-tag">KPI Dashboards</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="lv-detail-right"
+                                style="padding: 1.5rem; background:#fff; border-left:1px solid #ECEFF1; overflow-y:auto;">
+                                <h3 class="lv-section-title">Workflow & Process Story</h3>
+                                <div class="lv-workflow-story">
+                                    <div class="lv-story-step">
+                                        <div class="lv-story-icon"
+                                            style="background:rgba(121,85,72,0.1); color:#795548;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                style="width:20px;height:20px;">
+                                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <div class="lv-story-content">
+                                            <div class="lv-story-title">Step 1: Credential Validator</div>
+                                            <div class="lv-story-desc">Automatically verifies employee licenses,
+                                                certifications,
+                                                and background checks.</div>
+                                        </div>
+                                    </div>
+                                    <div class="lv-story-step">
+                                        <div class="lv-story-icon"
+                                            style="background:rgba(121,85,72,0.1); color:#795548;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                style="width:20px;height:20px;">
+                                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <div class="lv-story-content">
+                                            <div class="lv-story-title">Step 2: Performance Scorer</div>
+                                            <div class="lv-story-desc">Aggregates manager feedback and system data into
+                                                a holistic employee score.</div>
+                                        </div>
+                                    </div>
+                                    <div class="lv-story-step">
+                                        <div class="lv-story-icon"
+                                            style="background:rgba(121,85,72,0.1); color:#795548;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                style="width:20px;height:20px;">
+                                                <circle cx="12" cy="12" r="3" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path
+                                                    d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <div class="lv-story-content">
+                                            <div class="lv-story-title">Step 3: Fatigue Monitor</div>
+                                            <div class="lv-story-desc">Flags employees at risk of burnout based on
+                                                consecutive shifts and hours worked.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /lv-detail-view -->
+
+                </div><!-- /lv-right-panel -->
+
+
+            </div><!-- /ap-list-view -->
+
+        </div><!-- /ap-main -->
+
+    </div><!-- /ap-layout -->
+
+    <!-- ===== DEMO MODAL ===== -->
+    <div class="ap-modal-overlay" id="demo-modal">
+        <div class="ap-modal-content">
+            <button class="ap-modal-close" id="demo-close" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width:20px;height:20px;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="ap-modal-header">
+                <div class="ap-modal-icon">
+                    <svg id="demo-modal-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"
+                        style="width:24px;height:24px;">
+                        <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z" />
+                    </svg>
+                </div>
+                <h2 class="ap-modal-title" id="demo-modal-title">Agent Demo</h2>
+            </div>
+            <div class="ap-modal-body">
+                <p class="ap-modal-desc" id="demo-modal-desc">This is a demo of the agent.</p>
+                <div class="ap-modal-points">
+                    <div class="ap-modal-point">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="#2E7D32" stroke-width="2"
+                            style="width:16px;height:16px;min-width:16px;">
+                            <path d="M4 10l4 4 8-8" />
+                        </svg>
+                        <span>See how this agent operates in real-time</span>
+                    </div>
+                    <div class="ap-modal-point">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="#2E7D32" stroke-width="2"
+                            style="width:16px;height:16px;min-width:16px;">
+                            <path d="M4 10l4 4 8-8" />
+                        </svg>
+                        <span>Follow the step-by-step workflow</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ap-modal-footer">
+                <button class="ap-modal-btn-cancel" id="demo-cancel">Cancel</button>
+                <a class="ap-modal-btn-start" id="demo-start-btn" href="#">Start Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="agent-config-page.js"></script>
+    <script src="agent-hub.js?v=7"></script>
+    <script>
+        // ===== CONFIGURE BUTTON → DEDICATED CONFIG PAGES =====
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Map card IDs and agent card names to config page URLs
+            const CONFIG_URL_MAP = {
+                // Top-row cards (id-based)
+                'card-orchestrator': 'config-orchestrator.html',
+                'card-signal': 'config-copilot.html',
+                'card-scheduling': 'config-scheduling.html',
+                'card-ticketing': 'config-contract.html',
+                'card-dispatch': 'config-route.html',
+                // Agent row cards (name-based)
+                'contract intelligence': 'config-contract.html',
+                'scheduling optimization': 'config-scheduling.html',
+                'route optimization': 'config-route.html',
+                'signal co-pilot': 'config-copilot.html',
+                'signal orchestrator': 'config-orchestrator.html'
+            };
+
+            // 1. Top-row ap-cards: use card id
+            document.querySelectorAll('.ap-card').forEach(card => {
+                const url = CONFIG_URL_MAP[card.id];
+                if (!url) return;
+                const btn = card.querySelector('.view-config');
+                if (btn) {
+                    btn.addEventListener('click', e => {
+                        e.stopPropagation();
+                        window.location.href = url;
+                    });
+                }
+            });
+
+            // 2. Agent cards in Intelligent Agents row: match by heading text
+            document.querySelectorAll('.ap-agent-card').forEach(card => {
+                const heading = card.querySelector('.ap-agent-name, h3');
+                if (!heading) return;
+                const name = heading.textContent.trim().toLowerCase();
+                let url = null;
+                for (const [key, val] of Object.entries(CONFIG_URL_MAP)) {
+                    if (name.includes(key)) { url = val; break; }
+                }
+                if (!url) return;
+                const btn = card.querySelector('.view-config');
+                if (btn) {
+                    btn.addEventListener('click', e => {
+                        e.stopPropagation();
+                        window.location.href = url;
+                    });
+                }
+                // Also make the whole card navigate on click of card body (not buttons)
+                card.querySelector('.ap-agent-body')?.addEventListener('click', () => window.location.href = url);
+            });
+        });
+    </script>
+</body>
+
+</html>

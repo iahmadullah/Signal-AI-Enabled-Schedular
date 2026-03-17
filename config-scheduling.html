@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduling Optimization Agent Config | Signal Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="agent-config-page.css">
+</head>
+
+<body>
+    <div class="app-layout cfg-layout-override" id="app-layout" style="display:flex; height:100vh; overflow:hidden;">
+
+        <!-- ===== SIDEBAR NAVIGATION ===== -->
+        <nav class="sidebar" id="sidebar" aria-label="Main Navigation">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 22l6-10h10l-6 10H4z" fill="#FF9332" />
+                    <path d="M14 10l6-10h10l-6 10H14z" fill="#FF9332" />
+                </svg>
+            </div>
+                                                            <div class="sidebar-nav">
+                                                              <!-- Dashboard -->
+                                                              <button class="sidebar-nav-item" title="Dashboard">
+                                                                          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                                                                          <rect x="2" y="2" width="6" height="6" rx="1" />
+                                                                                                          <rect x="12" y="2" width="6" height="6" rx="1" />
+                                                                                                          <rect x="2" y="12" width="6" height="6" rx="1" />
+                                                                                                          <rect x="12" y="12" width="6" height="6" rx="1" />
+                                                                          </svg>
+                                                              </button>
+                                                              <!-- Signal/Map -->
+                                                              <button class="sidebar-nav-item" title="Signal Map">
+                                                                          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                                                                          <circle cx="10" cy="10" r="8" />
+                                                                                                          <path d="M2 10h16" />
+                                                                                                          <path d="M10 2c2.5 2 4 5 4 8s-1.5 6-4 8c-2.5-2-4-5-4-8s1.5-6 4-8z" />
+                                                                          </svg>
+                                                              </button>
+                                                              <!-- Schedule (Active) -->
+                                                              <button class="sidebar-nav-item" title="Schedule" id="nav-schedule">
+                                                                          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                                                                          <rect x="3" y="4" width="14" height="14" rx="2" />
+                                                                                                          <path d="M3 8h14" />
+                                                                                                          <path d="M7 2v4" />
+                                                                                                          <path d="M13 2v4" />
+                                                                          </svg>
+                                                              </button>
+                                                              <!-- Agent Studio -->
+                                                              <button class="sidebar-nav-item active" title="Agent Studio" id="nav-agent-studio" onclick="window.location.href='agent-hub.html'" >
+                                                                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: scale(0.85); transform-origin: center;">
+                                                                                                          <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z" stroke-linejoin="round" />
+                                                                                                          <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z" stroke-linejoin="round" />
+                                                                          </svg>
+                                                              </button>
+                                                              <!-- Users -->
+                                                              <button class="sidebar-nav-item" title="Users" style="position: relative;">
+                                                                          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                                                                          <circle cx="10" cy="7" r="3" />
+                                                                                                          <path d="M4 18c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+                                                                          </svg>
+                                                                          <span class="nav-dot"></span>
+                                                              </button>
+                                                              <!-- Settings -->
+                                                              <button class="sidebar-nav-item" title="Settings">
+                                                                          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                                                                          <circle cx="10" cy="10" r="3" />
+                                                                                                          <path d="M10 1.5v2m0 13v2m-6-8.5h-2m16 0h-2m-1.5-5L13 6.5m-8 7L6.5 15m9.5-2l-1.5-1.5m-11 0L5 13" />
+                                                                          </svg>
+                                                              </button>
+                                                          </div>
+            <button class="sidebar-toggle" id="sidebar-toggle" title="Collapse sidebar">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M8 2L4 6l4 4" />
+                </svg>
+            </button>
+        </nav>
+        
+
+        <!-- Main -->
+        <div class="cfg-main" style="flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; background:#F8F9FA;">
+
+            <!-- Header -->
+            <header class="header" id="page-header">
+                <div class="header-left">
+                    <div class="breadcrumb">
+                        <div class="breadcrumb-icon" style="background: #FFB300; border-radius: 6px; display:flex; align-items:center; justify-content:center; font-size:12px; height:24px; width:24px; padding:0;">📅</div>
+                        <span class="breadcrumb-text" style="color:#AEAEB2; cursor:pointer;" onclick="location.href='agent-hub.html'">Agent Studio</span><span class="breadcrumb-text" style="color:#AEAEB2; margin:0 8px;">/</span><span class="breadcrumb-text">Scheduling Optimization Agent Configuration</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    
+                    <div class="header-actions">
+                        <div class="header-notifications">
+                            <button class="notification-icon" title="Notifications"><svg viewBox="0 0 20 20" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M10 2a5 5 0 00-5 5v3l-1.5 2h13L15 10V7a5 5 0 00-5-5z" />
+                                    <path d="M8 17a2 2 0 004 0" />
+                                </svg></button>
+                            <button class="notification-icon" title="Messages"><svg viewBox="0 0 20 20" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-3 3V5a1 1 0 011-1z" />
+                                </svg></button>
+                        </div>
+                        <div class="header-profile" id="user-profile">
+                            <div class="avatar">MS</div>
+                            <div class="profile-info">
+                                <div class="profile-names">
+                                    <span class="profile-name">Mike Smith</span>
+                                    <span class="profile-role">Franchise Owner</span>
+                                </div>
+                                <div class="profile-dropdown-icon">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path d="M4 5.5l3 3 3-3" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- Content -->
+            <div class="cfg-content">
+
+                <!-- LEFT PANEL -->
+                <div class="cfg-panel-left" id="cfg-left-panel">
+
+                    <!-- Agent Hero -->
+                    <div class="cfg-agent-hero">
+                        <div class="cfg-agent-emoji" id="cfg-panel-icon" style="background:#1C1C1E;">🧠</div>
+                        <div>
+                            <div class="cfg-agent-hero-title" id="cfg-panel-title">Scheduling Optimization Agent</div>
+                            <div class="cfg-agent-hero-sub" id="cfg-agent-subtitle">Pipeline Supervisor · Master
+                                Controller</div>
+                        </div>
+                        <div class="cfg-agent-hero-toggle">
+                            Enabled
+                            <label class="cfg-toggle"><input type="checkbox" checked><span
+                                    class="cfg-toggle-track"></span></label>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="cfg-section">
+                        <div class="cfg-section-label">Description</div>
+                        <div class="cfg-desc-box">
+                            <div class="cfg-desc-key">Agent Purpose</div>
+                            <div class="cfg-desc-val" id="cfg-desc-purpose" contenteditable="true" spellcheck="false">
+                            </div>
+                            <div class="cfg-desc-key">Primary Objective</div>
+                            <div class="cfg-desc-val" id="cfg-desc-problems" contenteditable="true" spellcheck="false">
+                            </div>
+                            <div class="cfg-desc-key">Activation Conditions</div>
+                            <ul class="cfg-activation-list" id="cfg-activation-list"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Knowledge Base -->
+                    <div class="cfg-section">
+                        <div class="cfg-section-label">Knowledge Base</div>
+                        <div class="cfg-kb-wrap" id="cfg-kb-chips"></div>
+                    </div>
+
+                    <!-- Core Settings -->
+                    <div class="cfg-section">
+                        <div class="cfg-section-label">Core Settings</div>
+                        <div id="cfg-core-settings"></div>
+                    </div>
+
+                    <!-- Guardrails -->
+                    <div class="cfg-section">
+                        <div class="cfg-section-label">Guardrails &amp; Constraints</div>
+                        <div id="cfg-guardrails"></div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="cfg-section">
+                        <div class="cfg-section-label">Notification Settings</div>
+                        <div id="cfg-notifications"></div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT PANEL: Canvas -->
+                <div class="cfg-panel-right">
+                    <div class="cfg-canvas-topbar">
+                        <div>
+                            <div class="cfg-canvas-title">Workflow Canvas</div>
+                            <div class="cfg-canvas-hint">Drag nodes · Click port to connect · Double-click title to edit
+                            </div>
+                        </div>
+                        <button class="cfg-add-node-btn" id="cfg-add-node">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round">
+                                <path d="M8 3v10M3 8h10" />
+                            </svg>
+                            Add Node
+                        </button>
+                    </div>
+
+                    <div class="cfg-canvas-wrap">
+                        <svg class="cfg-canvas-svg" id="cfg-canvas-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+                        <div class="cfg-canvas" id="cfg-canvas"></div>
+                    </div>
+
+                    <!-- Floating AI Chat -->
+                    <div class="cfg-floating-chat" id="cfg-floating-chat">
+                        <div class="cfg-chat-opts" id="cfg-chat-opts">
+                            <button class="cfg-chat-opt"
+                                data-prompt="Add a new knowledge base connection for this agent">📚 Add Knowledge
+                                Base</button>
+                            <button class="cfg-chat-opt" data-prompt="Add a monitoring step to the workflow">🔀 Update
+                                Workflow</button>
+                            <button class="cfg-chat-opt"
+                                data-prompt="Add a new guardrail to prevent cascade failures">🛡 Add Rule</button>
+                        </div>
+                        <div class="cfg-chat-wrapper" id="cfg-chat-wrapper">
+                            <svg class="cfg-chat-sparkle" viewBox="0 0 24 24" fill="currentColor" width="17"
+                                height="17">
+                                <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z" />
+                            </svg>
+                            <input type="text" class="cfg-chat-input" id="cfg-chat-input"
+                                placeholder="Ask AI to modify this agent..." autocomplete="off">
+                            <button class="cfg-chat-send" id="cfg-chat-send">
+                                <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round">
+                                    <path d="M2 8h12M9 4l5 4-5 4" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="cfg-chat-resp" id="cfg-chat-resp" style="display:none;"></div>
+                    </div>
+                </div>
+
+            </div><!-- /cfg-content -->
+
+            <!-- Footer -->
+            <div class="cfg-footer">
+                <div class="cfg-footer-links">
+                    <a class="cfg-footer-link">Version History</a>
+                    <a class="cfg-footer-link">Agent Logs</a>
+                    <a class="cfg-footer-link" onclick="location.href='agent-hub.html'">← Back to Hub</a>
+                </div>
+                <div class="cfg-footer-actions">
+                    <button class="cfg-btn cfg-btn-secondary" id="cfg-discard-btn">Discard Changes</button>
+                    <button class="cfg-btn cfg-btn-primary" id="cfg-save-btn">Save Configuration</button>
+                </div>
+            </div>
+
+        </div><!-- /cfg-main -->
+    </div><!-- /cfg-layout -->
+
+    <script src="agent-config-page.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => initConfigPage('scheduling'));
+    </script>
+</body>
+
+</html>

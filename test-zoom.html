@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.onerror = function(msg, url, line) {
+    console.error("ERROR: " + msg + " at " + line);
+};
+</script>
+<script src="agent-config-page.js"></script>
+</head>
+<body>
+<div class="cfg-canvas-topbar">
+    <div id="cfg-add-node"></div>
+</div>
+<div id="cfg-canvas-wrap">
+    <div id="cfg-canvas-svg"></div>
+    <div id="cfg-canvas"></div>
+</div>
+<script>
+    AGENT_PAGE_CONFIGS = {
+        test: {
+            name: 'test', workflow: [{id: 'n1', x:0, y:0, title:'test'}], kb: [], core: [], guardrails: [], notifications: [], activation: []
+        }
+    };
+    try {
+        initConfigPage('test');
+        document.getElementById('cfg-zoom-in').click();
+        console.log("Zoom is now: " + _canvas.zoom);
+    } catch(e) {
+        console.error("CAUGHT: " + e.message);
+    }
+</script>
+</body>
+</html>

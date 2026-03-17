@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Schedule Revamp - Weekly Runsheet View for Franchise Operations">
+  <title>Schedule - Runsheets | Week View</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app-layout" id="app-layout">
+
+    <!-- ===== SIDEBAR NAVIGATION ===== -->
+    <nav class="sidebar" id="sidebar" aria-label="Main Navigation">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 22l6-10h10l-6 10H4z" fill="#FF9332" />
+          <path d="M14 10l6-10h10l-6 10H14z" fill="#FF9332" />
+        </svg>
+      </div>
+            <div class="sidebar-nav">
+        <!-- Dashboard -->
+        <button class="sidebar-nav-item" title="Dashboard">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="6" height="6" rx="1" />
+            <rect x="12" y="2" width="6" height="6" rx="1" />
+            <rect x="2" y="12" width="6" height="6" rx="1" />
+            <rect x="12" y="12" width="6" height="6" rx="1" />
+          </svg>
+        </button>
+        <!-- Signal/Map -->
+        <button class="sidebar-nav-item" title="Signal Map">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="10" cy="10" r="8" />
+            <path d="M2 10h16" />
+            <path d="M10 2c2.5 2 4 5 4 8s-1.5 6-4 8c-2.5-2-4-5-4-8s1.5-6 4-8z" />
+          </svg>
+        </button>
+        <!-- Schedule (Active) -->
+        <button class="sidebar-nav-item active" title="Schedule" id="nav-schedule">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="4" width="14" height="14" rx="2" />
+            <path d="M3 8h14" />
+            <path d="M7 2v4" />
+            <path d="M13 2v4" />
+          </svg>
+        </button>
+        <!-- Agent Studio -->
+        <button class="sidebar-nav-item" title="Agent Studio" id="nav-agent-studio" onclick="window.location.href='agent-hub.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: scale(0.85); transform-origin: center;">
+            <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z" stroke-linejoin="round" />
+            <path d="M19 16l1.2 2.8L23 20l-2.8 1.2L19 24l-1.2-2.8L15 20l2.8-1.2L19 16z" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <!-- Users -->
+        <button class="sidebar-nav-item" title="Users" style="position: relative;">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="10" cy="7" r="3" />
+            <path d="M4 18c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+          </svg>
+          <span class="nav-dot"></span>
+        </button>
+        <!-- Settings -->
+        <button class="sidebar-nav-item" title="Settings">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="10" cy="10" r="3" />
+            <path d="M10 1.5v2m0 13v2m-6-8.5h-2m16 0h-2m-1.5-5L13 6.5m-8 7L6.5 15m9.5-2l-1.5-1.5m-11 0L5 13" />
+          </svg>
+        </button>
+      </div>
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Collapse sidebar">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M8 2L4 6l4 4" />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content" id="main-content">
+
+      <!-- Header -->
+      <header class="header" id="page-header">
+        <div class="header-left">
+          <div class="breadcrumb">
+            <div class="breadcrumb-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="4" width="14" height="14" rx="2" />
+                <path d="M3 8h14" />
+                <path d="M7 2v4" />
+                <path d="M13 2v4" />
+              </svg>
+            </div>
+            <span class="breadcrumb-text">Schedule</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-location">
+            <span class="badge badge--brand">US Central Time</span>
+            <span class="badge badge--brand">ID: 1234</span>
+            <button class="location-dropdown" id="location-dropdown">
+              <span>#709 Columbus, Georgia</span>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M6 8l4 4 4-4" />
+              </svg>
+            </button>
+          </div>
+          <div class="header-actions">
+            <div class="header-notifications">
+              <button class="notification-icon" title="Notifications" id="notifications-btn">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M10 2a5 5 0 00-5 5v3l-1.5 2h13L15 10V7a5 5 0 00-5-5z" />
+                  <path d="M8 17a2 2 0 004 0" />
+                </svg>
+              </button>
+              <button class="notification-icon" title="Messages" id="messages-btn">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-3 3V5a1 1 0 011-1z" />
+                </svg>
+              </button>
+            </div>
+            <div class="header-profile" id="user-profile">
+              <div class="avatar">MS</div>
+              <div class="profile-info">
+                <div class="profile-names">
+                  <span class="profile-name">Mike Smith</span>
+                  <span class="profile-role">Franchise Owner</span>
+                </div>
+                <div class="profile-dropdown-icon">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M4 5.5l3 3 3-3" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Toolbar -->
+      <div class="toolbar" id="toolbar">
+        <!-- Tabs Row -->
+        <div class="tabs-row">
+          <div class="tabs" id="tabs">
+            <a href="general.html" class="tab" data-tab="global" style="text-decoration:none;">
+              <span class="tab-label">Global</span>
+              <div class="tab-indicator"></div>
+            </a>
+            <button class="tab" data-tab="sites">
+              <span class="tab-label">Sites</span>
+              <div class="tab-indicator"></div>
+            </button>
+            <a href="index.html" class="tab active" data-tab="runsheets" id="tab-runsheets"
+              style="text-decoration:none;">
+              <span class="tab-label">Runsheets</span>
+              <div class="tab-indicator"></div>
+            </a>
+            <button class="tab" data-tab="location">
+              <span class="tab-label">Location</span>
+              <div class="tab-indicator"></div>
+            </button>
+            <button class="tab" data-tab="officer">
+              <span class="tab-label">Officer</span>
+              <div class="tab-indicator"></div>
+            </button>
+            <button class="tab-with-icon" data-tab="custom">
+              <svg viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2" />
+                <rect x="8" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2" />
+                <rect x="1" y="8" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2" />
+                <path d="M10.5 9v4M8.5 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+              <span class="tab-label">Custom Views (1)</span>
+              <div class="tab-indicator"></div>
+            </button>
+            <button class="add-custom-view-btn" id="add-custom-view-btn">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M7 3v8M3 7h8" />
+              </svg>
+              <span>Add Custom view</span>
+            </button>
+          </div>
+          <div class="tabs-right-actions">
+            <button class="btn btn--auto-assign" id="agent-studio-btn-index"
+              onclick="window.location.href='agent-hub.html'">
+              <div class="auto-assign-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="url(#studio-grad2)" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <defs>
+                    <linearGradient id="studio-grad2" x1="0" y1="0" x2="16" y2="16" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.44" stop-color="#2961DF" />
+                      <stop offset="1" stop-color="#AC4AF1" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M12.5 4v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7.5L13 4z" />
+                  <path d="M9 2v3h3" />
+                  <path d="M8 8v4" />
+                  <path d="M6 10h4" />
+                </svg>
+              </div>
+              <span class="auto-assign-text">Agent Studio</span>
+            </button>
+            <button class="btn btn--auto-assign" id="auto-assign-btn">
+              <div class="auto-assign-icon">
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11l-1.5-3.5L3 6l3.5-1.5L8 1z" fill="url(#grad1)" />
+                  <path d="M13 10l.8 1.8L16 13l-2.2.8L13 16l-.8-2.2L10 13l2.2-.8L13 10z" fill="url(#grad1)" />
+                  <defs>
+                    <linearGradient id="grad1" x1="0" y1="0" x2="16" y2="16" gradientUnits="userSpaceOnUse">
+                      <stop offset="0.44" stop-color="#2961DF" />
+                      <stop offset="1" stop-color="#AC4AF1" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <span class="auto-assign-text">Auto Assign</span>
+            </button>
+            <button class="btn btn--create" id="create-btn">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M8 3v10M3 8h10" />
+              </svg>
+              <span>Create</span>
+              <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                style="width:8px;height:5px;">
+                <path d="M1 1l3 3 3-3" />
+              </svg>
+            </button>
+            <button class="btn btn--more" id="more-btn" title="More options">
+              <svg viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="3" r="1.5" />
+                <circle cx="8" cy="8" r="1.5" />
+                <circle cx="8" cy="13" r="1.5" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="filters-row" id="filters-row">
+          <div class="filters-left">
+            <div class="filters-controls">
+              <button class="search-input" id="search-btn" title="Search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="7" cy="7" r="5" />
+                  <path d="M11 11l3 3" />
+                </svg>
+              </button>
+              <button class="filter-dropdown" id="filter-sites">
+                <span>Sites</span>
+                <svg viewBox="0 0 10 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M1 1l4 3 4-3" />
+                </svg>
+              </button>
+              <button class="filter-dropdown" id="filter-shifts">
+                <span>Shifts</span>
+                <svg viewBox="0 0 10 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M1 1l4 3 4-3" />
+                </svg>
+              </button>
+              <button class="filter-dropdown" id="filter-officer">
+                <span>Officer</span>
+                <svg viewBox="0 0 10 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M1 1l4 3 4-3" />
+                </svg>
+              </button>
+              <button class="filter-dropdown" id="filter-status">
+                <span>Status</span>
+                <svg viewBox="0 0 10 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M1 1l4 3 4-3" />
+                </svg>
+              </button>
+              <button class="filter-btn" id="filter-advanced">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M2 3h10" />
+                  <path d="M4 7h6" />
+                  <path d="M6 11h2" />
+                </svg>
+                <span>Filters</span>
+              </button>
+            </div>
+          </div>
+          <div class="filters-right">
+            <button class="badge badge--alert" id="hits-attention-btn">32 Hits Require Attention</button>
+            <div class="date-range" id="date-range">
+              <button class="date-range-arrow" id="date-prev" title="Previous week">
+                <svg viewBox="0 0 5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M4 1L1 5l3 4" />
+                </svg>
+              </button>
+              <span class="date-range-text">Jan 19 - Jan 25, 2026</span>
+              <button class="date-range-arrow" id="date-next" title="Next week">
+                <svg viewBox="0 0 5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M1 1l3 4-3 4" />
+                </svg>
+              </button>
+            </div>
+            <div class="view-toggle" id="view-toggle">
+              <button class="view-toggle-btn" data-view="day">Day</button>
+              <button class="view-toggle-btn active" data-view="week">Week</button>
+              <button class="view-toggle-btn" data-view="month">Month</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div class="calendar-area" id="calendar-area">
+        <div class="calendar-container">
+          <div class="calendar-header" id="calendar-header">
+            <div class="calendar-header-cell">SUN</div>
+            <div class="calendar-header-cell">MON</div>
+            <div class="calendar-header-cell">TUE</div>
+            <div class="calendar-header-cell today">WED</div>
+            <div class="calendar-header-cell">THU</div>
+            <div class="calendar-header-cell">FRI</div>
+            <div class="calendar-header-cell">SAT</div>
+          </div>
+          <div class="calendar-body" id="calendar-body">
+            <!-- Columns will be populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="legend" id="schedule-legend">
+        <div class="legend-left">
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--patrol"></div>
+            <div class="legend-label-group">
+              <span class="legend-label">Patrol</span>
+              <span class="legend-count">91</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--extra"></div>
+            <div class="legend-label-group">
+              <span class="legend-label">Extra Runsheet</span>
+              <span class="legend-count">18</span>
+            </div>
+          </div>
+        </div>
+        <div class="legend-right">
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--completed">
+              <svg viewBox="0 0 8 8" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M1.5 4L3.5 6L6.5 2" />
+              </svg>
+            </div>
+            <div class="legend-label-group">
+              <span class="legend-label">Completed 20</span>
+              <span class="legend-count">52</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--in-progress">
+              <svg viewBox="0 0 8 8" fill="none" stroke="white" stroke-width="1" stroke-linecap="round">
+                <circle cx="4" cy="4" r="2.5" stroke-dasharray="4 2" />
+                <path d="M3 4l1 1 2-2" />
+              </svg>
+            </div>
+            <div class="legend-label-group">
+              <span class="legend-label">In progress</span>
+              <span class="legend-count">12</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--not-started"></div>
+            <div class="legend-label-group">
+              <span class="legend-label">Not started</span>
+              <span class="legend-count">32</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--unassigned"></div>
+            <div class="legend-label-group">
+              <span class="legend-label">Unassigned</span>
+              <span class="legend-count">24</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-icon legend-icon--splitted"></div>
+            <div class="legend-label-group">
+              <span class="legend-label">Splitted</span>
+              <span class="legend-count">6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- AI Chat FAB -->
+    <button class="ai-fab" id="ai-fab" title="AI Assistant">
+      <svg viewBox="0 0 28 28" fill="none">
+        <path d="M14 3l2 5 5 1-4 3 1 5-4-2.5L10 17l1-5-4-3 5-1L14 3z" fill="white" />
+        <path d="M22 16l1.2 2.8L26 20l-2.8 1.2L22 24l-1.2-2.8L18 20l2.8-1.2L22 16z" fill="white" opacity="0.7" />
+      </svg>
+    </button>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
